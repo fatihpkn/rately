@@ -1,7 +1,24 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
+import { ApolloProvider } from "@apollo/client";
+import { StoreProvider } from "easy-peasy";
+import type { AppContext, AppProps } from "next/app";
+import Client from "../apollo";
+import Header from "../components/header";
+import { initializeStore, initStore, useStore } from "../store";
+import "../styles/globals.sass";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+let store = initStore();
+
+function RatelyApp({ Component, pageProps }: AppProps) {
+  store = useStore(pageProps.ssrStoreState);
+
+  return (
+    <ApolloProvider client={Client}>
+      <StoreProvider store={store}>
+        <Header />
+        <Component {...pageProps} />
+      </StoreProvider>
+    </ApolloProvider>
+  );
 }
-export default MyApp
+
+export default RatelyApp;
