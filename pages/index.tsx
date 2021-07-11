@@ -1,5 +1,5 @@
 import { ApolloQueryResult } from "@apollo/client";
-import { GetStaticProps, NextPage } from "next";
+import { GetServerSideProps, GetStaticProps, NextPage } from "next";
 import Head from "next/head";
 import React from "react";
 import { QueryClient, useQuery } from "react-query";
@@ -16,7 +16,7 @@ interface IHomeProps extends ApolloQueryResult<EmployeesQueryModel> {
 }
 
 const Home: NextPage<IHomeProps> = (props) => {
-  const { data, isError } = useQuery("employees", async () => await GetEmployees());
+  const { data, isError, isFetchedAfterMount } = useQuery("employees", async () => await GetEmployees(), { keepPreviousData: true });
 
   const _employees = data?.data.employees;
 
@@ -27,7 +27,7 @@ const Home: NextPage<IHomeProps> = (props) => {
         <meta name='description' content='Rate' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <MainContainer>{isError ? <h1>Opss.. bir hata var :(</h1> : <EmployeesList employees={_employees} />}</MainContainer>
+      <MainContainer>{isError ? <h1>Opss.. bir hata var :(</h1> : !isFetchedAfterMount ? <div /> : <EmployeesList employees={_employees} />}</MainContainer>
 
       <footer></footer>
     </div>
@@ -42,6 +42,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   await queryClient.prefetchQuery("employees", async () => await GetEmployees());
 
   return {
+    revalidate: 1,
     props: {
       dehydratedState: dehydrate(queryClient),
     },

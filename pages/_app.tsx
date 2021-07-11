@@ -8,13 +8,7 @@ import Client from "../apollo";
 import Header from "../components/header";
 import "../styles/globals.sass";
 
-const $queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      cacheTime: 100000000, // 24 hours
-    },
-  },
-});
+const $queryClient = new QueryClient();
 
 const RatelyApp = (props: AppProps) => {
   const [queryClient] = React.useState(() => $queryClient);
