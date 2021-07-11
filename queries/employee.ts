@@ -1,9 +1,9 @@
 import { gql } from "@apollo/client";
 import Client from "../apollo";
-import { EmployeesQueryModel } from "../models/queries";
+import { EmployeeQueryModel, EmployeesQueryModel } from "../models/queries";
 
 export const GetEmployeeByID = async (id: string | string[] | undefined) =>
-  await Client.query<EmployeesQueryModel>({
+  await Client.query<EmployeeQueryModel>({
     query: gql`
 {
   employee(id: "${id}") {
