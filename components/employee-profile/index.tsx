@@ -1,5 +1,6 @@
 import Link from "next/link";
 import * as React from "react";
+import Image from "next/image";
 import { useMutation, useQueryClient } from "react-query";
 import { EmployeeModel } from "../../models/employee";
 import { ic_arrow_back } from "react-icons-kit/md/ic_arrow_back";
@@ -28,7 +29,7 @@ const EmployeeProfile: React.FunctionComponent<IEmployeeProfileProps> = (props) 
         <div className='flex gap-3 flex-col md:flex-row md:justify-between'>
           <div className='flex gap-3 flex-col md:flex-row'>
             <div className='w-32 h-32 md:w-12 md:h-12 rounded-lg overflow-hidden'>
-              <img src={employee.avatar + `?${employee.gender},${employee.firstName}&content_filter=high`} />
+              <Image alt={employee.firstName + " " + employee.lastName} width={200} height={200} src={employee.avatar + `?${employee.gender},${employee.firstName}&content_filter=high`} />
             </div>
             <div className='flex flex-col justify-center'>
               <h1 className='text-2xl leading-none text-gray-700 relative'>

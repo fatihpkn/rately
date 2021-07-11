@@ -3,14 +3,16 @@ import { useEmloyees } from "../../context/employees";
 import { EmployeeModel } from "../../models/employee";
 import UserCard from "../employee-card";
 
-export interface IEmployeesListProps {
-  employees: EmployeeModel[];
+interface IEmployeesListProps {
+  employees?: EmployeeModel[];
 }
 
-export default function EmployeesList(props: IEmployeesListProps) {
+const EmployeesList: React.FunctionComponent<IEmployeesListProps> = (props) => {
   const { employees } = props;
 
   const sortedData = employees ? employees.slice().sort((a, b) => b.rate - a.rate) : [];
 
-  return sortedData && sortedData.map((d, i) => <UserCard key={d.id} employee={d} />);
-}
+  return <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5 animate-fadeIn duration-75'>{sortedData ? sortedData.map((d, i) => <UserCard key={d.id} employee={d} />) : <div />}</div>;
+};
+
+export default EmployeesList;

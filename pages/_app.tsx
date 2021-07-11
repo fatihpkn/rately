@@ -1,15 +1,12 @@
 import { ApolloProvider } from "@apollo/client";
-import { GetStaticProps } from "next";
-import App from "next/app";
+import App, { AppContext } from "next/app";
+import { AppProps } from "next/dist/next-server/lib/router/router";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { dehydrate, Hydrate } from "react-query/hydration";
+import { Hydrate } from "react-query/hydration";
 import Client from "../apollo";
 import Header from "../components/header";
-import { GetEmployees } from "../queries/employee";
 import "../styles/globals.sass";
-import { persistQueryClient } from "react-query/persistQueryClient-experimental";
-import { createWebStoragePersistor } from "react-query/createWebStoragePersistor-experimental";
 
 const $queryClient = new QueryClient({
   defaultOptions: {
@@ -19,7 +16,7 @@ const $queryClient = new QueryClient({
   },
 });
 
-const RatelyApp = (props) => {
+const RatelyApp = (props: AppProps) => {
   const [queryClient] = React.useState(() => $queryClient);
 
   const { Component, pageProps } = props;
@@ -36,7 +33,7 @@ const RatelyApp = (props) => {
   );
 };
 
-RatelyApp.getInitialProps = async (context) => {
+RatelyApp.getInitialProps = async (context: AppContext) => {
   const appProps = await App.getInitialProps(context);
   return { ...appProps };
 };

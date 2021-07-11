@@ -1,4 +1,5 @@
 import { ApolloQueryResult } from "@apollo/client";
+import Image from "next/image";
 import Link from "next/link";
 import React, { MouseEventHandler } from "react";
 import { useMutation, useQueryClient } from "react-query";
@@ -30,14 +31,19 @@ const UserCardComp: React.FunctionComponent<IEmployeeCardProps> = (props) => {
 
         const updatedEmployees = [..._employees.filter((e) => e.id !== _employee.id), { ..._employee }];
 
-        const _newEmployeesData: ApolloQueryResult<EmployeesQueryModel> = {
+        let _newEmployeesData: ApolloQueryResult<EmployeesQueryModel> | undefined = prevEmployeesQuery ? prevEmployeesQuery : undefined;
+
+        //@ts-ignore
+        _newEmployeesData = {
           ...prevEmployeesQuery,
           data: {
             employees: updatedEmployees,
           },
         };
 
-        client.setQueryData<ApolloQueryResult<EmployeesQueryModel>>("employees", _newEmployeesData);
+        if (_newEmployeesData) {
+          client.setQueryData<ApolloQueryResult<EmployeesQueryModel>>("employees", _newEmployeesData);
+        }
       },
     }
   );
@@ -53,7 +59,7 @@ const UserCardComp: React.FunctionComponent<IEmployeeCardProps> = (props) => {
         <div className='employee-card'>
           <div className='employee-card-inner'>
             <div className='employee-card-image'>
-              <img src={employee.avatar + `?${employee.gender},${employee.firstName}&content_filter=high`} />
+              <Image alt={employee.firstName + " " + employee.lastName} width={200} height={200} src={employee.avatar + `?${employee.gender},${employee.firstName}&content_filter=high`} />
             </div>
             <div className='employee-card-description'>
               <div className='employee-card-name'>

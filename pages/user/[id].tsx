@@ -1,14 +1,13 @@
 import { ApolloQueryResult } from "@apollo/client";
-import { GetServerSideProps, GetStaticProps, NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
-import { QueryClient, useQuery, useQueryClient } from "react-query";
+import { QueryClient, useQueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
-import Client from "../../apollo";
 import EmployeeProfile from "../../components/employee-profile";
 import MainContainer from "../../components/main-container";
 import { EmployeeModel } from "../../models/employee";
 import { EmployeeQueryModel, EmployeesQueryModel } from "../../models/queries";
-import { GetEmployeeByID, GetEmployees } from "../../queries/employee";
+import { GetEmployeeByID } from "../../queries/employee";
 
 interface IUserProfilePageProps {
   params: any;
@@ -51,7 +50,7 @@ const UserProfile: NextPage<IUserProfilePageProps> = (props) => {
 
 export default UserProfile;
 
-export const getServerSideProps: GetServerSideProps<IUserProfilePageProps> = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery(["employee", context?.params?.id], async () => await GetEmployeeByID(context?.params?.id));

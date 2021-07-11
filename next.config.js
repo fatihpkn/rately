@@ -11,6 +11,9 @@ const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
   },
+  images: {
+    domains: ["source.unsplash.com"],
+  },
 };
 
 module.exports = nextConfig;
