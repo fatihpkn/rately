@@ -1,24 +1,44 @@
 import { ApolloProvider } from "@apollo/client";
-import { StoreProvider } from "easy-peasy";
-import type { AppContext, AppProps } from "next/app";
+import { GetStaticProps } from "next";
+import App from "next/app";
+import React from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { dehydrate, Hydrate } from "react-query/hydration";
 import Client from "../apollo";
 import Header from "../components/header";
-import { initializeStore, initStore, useStore } from "../store";
+import { GetEmployees } from "../queries/employee";
 import "../styles/globals.sass";
+import { persistQueryClient } from "react-query/persistQueryClient-experimental";
+import { createWebStoragePersistor } from "react-query/createWebStoragePersistor-experimental";
 
-let store = initStore();
+const $queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: 100000000, // 24 hours
+    },
+  },
+});
 
-function RatelyApp({ Component, pageProps }: AppProps) {
-  store = useStore(pageProps.ssrStoreState);
+const RatelyApp = (props) => {
+  const [queryClient] = React.useState(() => $queryClient);
+
+  const { Component, pageProps } = props;
 
   return (
     <ApolloProvider client={Client}>
-      <StoreProvider store={store}>
-        <Header />
-        <Component {...pageProps} />
-      </StoreProvider>
+      <QueryClientProvider client={queryClient}>
+        <Hydrate state={pageProps.dehydratedState}>
+          <Header />
+          <Component {...pageProps} />
+        </Hydrate>
+      </QueryClientProvider>
     </ApolloProvider>
   );
-}
+};
+
+RatelyApp.getInitialProps = async (context) => {
+  const appProps = await App.getInitialProps(context);
+  return { ...appProps };
+};
 
 export default RatelyApp;

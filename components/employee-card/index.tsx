@@ -1,20 +1,50 @@
+import { ApolloQueryResult } from "@apollo/client";
 import Link from "next/link";
+import React, { MouseEventHandler } from "react";
+import { useMutation, useQueryClient } from "react-query";
 import { EmployeeModel } from "../../models/employee";
-import { useStoreActions, useStoreState } from "../../store/model";
+import { EmployeesQueryModel } from "../../models/queries";
+import shouldRender from "../../utils/shouldRender";
 
 interface IEmployeeCardProps {
   employee: EmployeeModel;
 }
 
-const UserCard: React.FunctionComponent<IEmployeeCardProps> = (props) => {
-  const { upVoteEmployee } = useStoreActions((store) => store.Employees);
-
+const UserCardComp: React.FunctionComponent<IEmployeeCardProps> = (props) => {
   const { employee } = props;
 
-  const handleUpvateClick = (e: MouseEvent) => {
-    e.preventDefault();
+  const client = useQueryClient();
 
-    upVoteEmployee(employee);
+  const { mutate } = useMutation(
+    async (_employee) => {
+      // API isteği yapılacak yer.
+      // Fake API ile update yapılamadığı için her seferinde ilk değeri dönecek, çalışan bir API ile eployee.rate update işlemi yapılabilir.
+    },
+    {
+      onMutate: (_employee: EmployeeModel) => {
+        const prevEmployeesQuery = client.getQueryData<ApolloQueryResult<EmployeesQueryModel>>("employees");
+
+        const prevEmployees = prevEmployeesQuery?.data.employees ? [...prevEmployeesQuery?.data.employees] : [];
+
+        const _employees = prevEmployees ? [...prevEmployees] : [];
+
+        const updatedEmployees = [..._employees.filter((e) => e.id !== _employee.id), { ..._employee }];
+
+        const _newEmployeesData: ApolloQueryResult<EmployeesQueryModel> = {
+          ...prevEmployeesQuery,
+          data: {
+            employees: updatedEmployees,
+          },
+        };
+
+        client.setQueryData<ApolloQueryResult<EmployeesQueryModel>>("employees", _newEmployeesData);
+      },
+    }
+  );
+
+  const handleUpvateClick: MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
+    mutate({ ...employee, rate: employee.rate + 1 });
   };
 
   return (
@@ -47,5 +77,7 @@ const UserCard: React.FunctionComponent<IEmployeeCardProps> = (props) => {
     </Link>
   );
 };
+
+const UserCard = React.memo(UserCardComp, (prev, next) => shouldRender(prev.employee, next.employee, ["id", "firstName", "lastName", "avatar", "jobTitle", "rate"]));
 
 export default UserCard;

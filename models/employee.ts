@@ -12,6 +12,7 @@ export interface EmployeeModel {
   lastName: string;
   gender: Gender;
   age: number;
+  phone: string;
   jobTitle: string;
   address: string;
   subordinates: string;
