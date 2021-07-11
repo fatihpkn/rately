@@ -12,6 +12,7 @@ export const GetEmployeeByID = async (id: string | string[] | undefined) =>
     firstName
     lastName
     jobTitle
+    phone
     gender
     address
     company {
