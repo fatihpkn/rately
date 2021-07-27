@@ -26,6 +26,7 @@ const Home: NextPage<IHomeProps> = (props) => {
         <title>RATE`LY</title>
         <meta name='description' content='Rate' />
         <link rel='icon' href='/favicon.ico' />
+        <meta httpEquiv='Content-Security-Policy' content='upgrade-insecure-requests'></meta>
       </Head>
       <MainContainer>{isError ? <h1>Opss.. bir hata var :(</h1> : !isFetchedAfterMount ? <div /> : <EmployeesList employees={_employees} />}</MainContainer>
 
